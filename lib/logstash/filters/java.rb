@@ -32,8 +32,9 @@ class LogStash::Filters::Java < LogStash::Filters::Base
     # return nothing unless there's an actual filter event
     return unless filter?(event)
 
-    puts event.to_yaml
-    @myClass.Do()
+    if !@myClass.Process(event.to_hash)
+      event.cancel
+    end
 
     filter_matched(event)
   end
