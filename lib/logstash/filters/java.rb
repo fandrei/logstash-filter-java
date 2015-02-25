@@ -1,6 +1,7 @@
 # encoding: utf-8
 require "logstash/filters/base"
 require "logstash/namespace"
+require 'securerandom'
 
 include Java
 
@@ -13,17 +14,22 @@ class LogStash::Filters::Java < LogStash::Filters::Base
 
   public
   def register
-    templatePath = File.dirname(File.expand_path(__FILE__))
-    templateFile = File.join(templatePath, "Template.java")
+    basePath = File.dirname(File.expand_path(__FILE__))
+    templateFile = File.join(basePath, "Template.java")
     template = File.read(templateFile)
 
     codeFile = eval("\"" + template + "\"")
 
-    filePath = 'temp/FilterClass.java'
+    compilation_path = basePath + '/../../../temp/' + SecureRandom.hex + '/'
+    Dir.mkdir(compilation_path) unless File.exists?(compilation_path)
+    compilation_path = File.realpath(compilation_path)
+    puts 'Compilation path: ' + compilation_path
+
+    filePath = compilation_path + '/FilterClass.java'
     File.write(filePath, codeFile)
     system("javac #{filePath}")
 
-    $CLASSPATH << File.join(Dir.pwd, 'temp')
+    $CLASSPATH << compilation_path
     @myClass = JavaUtilities.get_proxy_class('FilterClass')
   end
 
