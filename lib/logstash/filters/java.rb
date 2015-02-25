@@ -11,6 +11,7 @@ class LogStash::Filters::Java < LogStash::Filters::Base
   milestone 1
 
   config :code, :validate => :string, :required => true
+  config :classpath, :validate => :string, :required => false
 
   public
   def register
@@ -27,9 +28,10 @@ class LogStash::Filters::Java < LogStash::Filters::Base
 
     filePath = compilation_path + '/FilterClass.java'
     File.write(filePath, codeFile)
-    system("javac #{filePath}")
+    system("javac -cp #{classpath} #{filePath}")
 
     $CLASSPATH << compilation_path
+    $CLASSPATH << classpath
     @myClass = JavaUtilities.get_proxy_class('FilterClass')
   end
 
