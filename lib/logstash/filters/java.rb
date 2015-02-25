@@ -23,7 +23,7 @@ class LogStash::Filters::Java < LogStash::Filters::Base
     compilation_path = basePath + '/../../../temp/' + SecureRandom.hex + '/'
     Dir.mkdir(compilation_path) unless File.exists?(compilation_path)
     compilation_path = File.realpath(compilation_path)
-    puts 'Compilation path: ' + compilation_path
+    puts 'Java compilation path: ' + compilation_path
 
     filePath = compilation_path + '/FilterClass.java'
     File.write(filePath, codeFile)
