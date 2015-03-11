@@ -28,7 +28,7 @@ class LogStash::Filters::Java < LogStash::Filters::Base
 
     filePath = compilation_path + '/FilterClass.java'
     File.write(filePath, codeFile)
-    system("javac -cp #{classpath} #{filePath}")
+    puts `javac -cp #{classpath} #{filePath}`
 
     $CLASSPATH << compilation_path
     $CLASSPATH << classpath
