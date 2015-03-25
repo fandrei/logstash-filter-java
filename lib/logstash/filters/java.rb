@@ -27,6 +27,7 @@ class LogStash::Filters::Java < LogStash::Filters::Base
 
     filePath = compilation_path + '/FilterClass.java'
     File.write(filePath, codeFile)
+    classpath = "." if classpath.nil? || classpath.empty?
     compilationCommand = "javac -cp #{classpath} #{filePath}"
     puts compilationCommand
     puts `#{compilationCommand} 2>&1 `
