@@ -18,6 +18,7 @@ class LogStash::Filters::Java < LogStash::Filters::Base
     basePath = File.dirname(File.expand_path(__FILE__))
     templateFile = File.join(basePath, "Template.java")
     template = File.read(templateFile)
+    myClasspath = classpath
 
     codeFile = eval("\"" + template + "\"")
 
@@ -27,13 +28,13 @@ class LogStash::Filters::Java < LogStash::Filters::Base
 
     filePath = compilation_path + '/FilterClass.java'
     File.write(filePath, codeFile)
-    classpath = "." if classpath.nil? || classpath.empty?
-    compilationCommand = "javac -cp #{classpath} #{filePath}"
+    myClasspath = "." if myClasspath.nil? || myClasspath.empty?
+    compilationCommand = "javac -cp #{myClasspath} #{filePath}"
     puts compilationCommand
     puts `#{compilationCommand} 2>&1 `
 
     $CLASSPATH << compilation_path
-    $CLASSPATH << classpath
+    $CLASSPATH << myClasspath
     @myClass = JavaUtilities.get_proxy_class('FilterClass')
   end
 
